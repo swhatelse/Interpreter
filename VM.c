@@ -1,6 +1,8 @@
 #include<stdio.h>
+#include<stdlib.h>
 
 #define NBREGS 15
+#define BUFSIZE 8
 
 int* regs[NBREGS];
 int* R15;
@@ -17,7 +19,7 @@ void movReg(int* a, int* b){
 }
 
 void movVal(int* a, int val){
-  *a = b;
+  *a = val;
 }
 
 
@@ -33,7 +35,7 @@ void sub(int *regX, int *regY){
   *regX -= *regY;
 }
 
-void div(int *regX, int *regY){
+void divide(int *regX, int *regY){
   *regX = *regX / *regY; 
 }
 
@@ -52,12 +54,18 @@ void halt(){
 int main(int argc, char** argv){
   boot();
   FILE* f;
-  char* progName;
-  for(;;){
+  char* progName = malloc(sizeof(char) * BUFSIZE);
+  /* for(;;){ */
     // Waiting for a program
-    fopen(stdin);
-    
+    /* f = fdopen(stdin, "r"); */
+  while(){
+    realloc(progName, );
   }
+    fgets(progName, 1024, stdin);
+    /* fclose(f); */
+    printf("%s\n", progName);
+    free( progName);
+  /* } */
   halt();
   return 0;
 }
