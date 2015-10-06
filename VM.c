@@ -12,9 +12,14 @@ int* R20;
 int* R21;
 
 
-void mov(int* a, int* b){
+void movReg(int* a, int* b){
   a = b;
 }
+
+void movVal(int* a, int val){
+  *a = b;
+}
+
 
 void add(int *regX, int *regY){
   *regX += *regY;
@@ -46,7 +51,11 @@ void halt(){
 
 int main(int argc, char** argv){
   boot();
+  FILE* f;
+  char* progName;
   for(;;){
+    // Waiting for a program
+    fopen(stdin);
     
   }
   halt();
