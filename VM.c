@@ -1,10 +1,15 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
+#include"Interpreter.h"
 
 #define NBREGS 15
 #define BUFSIZE 8
 
-int* regs[NBREGS];
+#define SHELL()                                 \
+  printf("\033[32;1mIn the matrix ~/ $ \033[0m")
+
+int* R[NBREGS];
 int* R15;
 int* R16;
 int* R17;
@@ -39,7 +44,7 @@ void divide(int *regX, int *regY){
   *regX = *regX / *regY; 
 }
 
-void branch(){
+void branch(int *reg){
 
 }
 
@@ -53,19 +58,20 @@ void halt(){
 
 int main(int argc, char** argv){
   boot();
-  FILE* f;
-  char* progName = malloc(sizeof(char) * BUFSIZE);
-  /* for(;;){ */
-    // Waiting for a program
-    /* f = fdopen(stdin, "r"); */
-  while(){
-    realloc(progName, );
-  }
-    fgets(progName, 1024, stdin);
-    /* fclose(f); */
-    printf("%s\n", progName);
-    free( progName);
-  /* } */
+  char* progName = malloc( sizeof( char ) * CHUNK );
+  
+  // Waiting for a programm
+  SHELL();
+  ProgName(progName);
+  printf("%s\n", progName);
+ 
+  // Read progamm
+  
+
+  // Close programm
+
+  free( progName );
+
   halt();
   return 0;
 }
