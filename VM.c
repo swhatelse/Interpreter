@@ -50,6 +50,7 @@ void branch(int *reg){
 
 void boot(){
   printf("Booting\n");
+  /* __asm__("JMP 0x1000"); */
 }
 
 void halt(){
@@ -63,13 +64,13 @@ int main(int argc, char** argv){
   // Waiting for a programm
   SHELL();
   ProgName(progName);
-  printf("%s\n", progName);
- 
+  FILE* fd = fopen(progName, "r");
   // Read progamm
+  /* run(progName); */
+  fetch(fd);
   
-
   // Close programm
-
+  fclose(fd);
   free( progName );
 
   halt();
