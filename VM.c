@@ -5,6 +5,7 @@
 
 #define NBREGS 15
 #define BUFSIZE 8
+#define MEMSIZE 128
 
 #define SHELL()                                 \
   printf("\033[32;1mIn the matrix ~/ $ \033[0m")
@@ -18,6 +19,7 @@ int* R19;
 int* R20;
 int* R21;
 
+char RAM[MEMSIZE];
 
 void movReg(int* a, int* b){
   a = b;
