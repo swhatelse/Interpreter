@@ -3,6 +3,9 @@
 #include<string.h>
 
 #define CHUNK 8
+#define LINESIZE 32
+#define INSTRSIZE 32
+// OPCODE
 #define BR      0b1001  // Unconditionnal branch
 #define BRLT    0b1010  // Cond less than
 #define BRGT    0b1100  // Cond greater than

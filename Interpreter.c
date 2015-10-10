@@ -45,108 +45,149 @@ char** run(char* progName){
   return prog;
 }
 
+int explode(const char* line, char** words){
+  int nbWords = 0;
+  int nbChars = 0;
+  int i = 0;
+  int beg = 0;
+
+  while(line[i] != '\0'){
+    if(line[i] == ' ' || line[i] == '\n'){
+      words = realloc(words, sizeof(char*) * nbWords +1);
+      *(words + nbWords) = realloc(*(words + nbWords), sizeof(char)*nbChars + 1);
+      for(int j = beg, k = 0; j < i; j++, k++){
+	*(*(words + nbWords)+k) = line[j];
+      }
+      *(*(words + nbWords)+nbChars) = '\0';
+      nbWords++;
+      nbChars = 0;
+      beg = i + 1;
+    }
+    else{
+      nbChars++;
+    }
+    i++;
+  }
+
+  return nbWords;
+}
+
+int translateToOpcode(char* word){
+  int opcode = 0;
+    if(word[0] == 'A' && word[1] == 'D' && word[2] == 'D'){
+      opcode = OPCODE(ADD);
+    }
+    else if(word[0] == 'S' && word[1] == 'U' && word[2] == 'B'){
+      opcode = OPCODE(SUB);
+    }
+    else if(word[0] == 'M' && word[1] == 'U' && word[2] == 'L'){
+      opcode = OPCODE(MUL);
+    }
+    else if(word[0] == 'D' && word[1] == 'I' && word[2] == 'V'){
+      opcode = OPCODE(DIV);
+    }
+    // Transfert operations
+    else if(word[0] == 'M' && word[1] == 'O' && word[2] == 'V'){
+      if(word[4] == 'R'){
+	if(1){
+	  opcode = OPCODE(MOVV);
+	}
+      }
+      else if(1){
+	opcode = OPCODE(MOVV);
+      }
+      else{
+	// trapp
+      }
+    }
+    // Branches
+    else if(word[0] == 'B' && word[1] == 'R'){
+      if(word[2] == ' '){
+	opcode = OPCODE(BR);
+      }
+      else if(word[2] == 'L' && word[3] == 'T'){
+	opcode = OPCODE(BRLT);
+      }
+      else if(word[2] == 'G' && word[3] == 'T'){
+	opcode = OPCODE(BRGT);
+      }
+      else if(word[2] == 'E' && word[3] == 'Q'){
+	opcode = OPCODE(BREQ);
+      }
+      else if(word[2] == 'N' && word[3] == 'E'){
+	opcode = OPCODE(BRNE);
+      }
+      else{
+	// trapp
+      }
+    }
+  return opcode;
+}
+
 char** fetch(FILE* fd){
   char** prog = malloc(sizeof(char*));
-  char ch;
-  /* char* instruction = malloc( sizeof( char ) * CHUNK ); */
-  int size = 0;
-  int offset = 0;
   int nbInstruction = 0;
-  *prog = malloc( sizeof( char ) * CHUNK );
-
-  // First Version
-  /* // Fill a line */
-  /* while( EOF != ( ch = fgetc( fd ) ) ){ */
-  /*   if(offset >= size ){ */
-  /*     instruction = ( char* ) realloc( instruction, CHUNK + offset ); */
-  /*     size += CHUNK; */
-  /*   } */
-  /*   memcpy(instruction + offset, &ch, sizeof( char ) ); */
-  /*   offset++; */
-  /*   // EOL */
-  /*   if(ch == '\n'){ */
-  /*     printf("%s", instruction); */
-  /*     offset = 0; */
-  /*     size = 0; */
-  /*     nbInstruction++; */
-  /*     prog = ( char* ) realloc( prog, nbInstruction * sizeof(char*) ); */
-  /*     *(prog + nbInstruction) = malloc( sizeof( instruction ) ); */
-  /*     memcpy( *(prog + nbInstruction), instruction, sizeof(instruction)); */
-  /*   } */
-    
-  /* } */
-
-  /* while( EOF != ( ch = fgetc( fd ) ) ){ */
-  /*   // Allocate memory by chunks */
-  /*   if(offset >= size ){ */
-  /*     *(prog + nbInstruction) = ( char* ) realloc( *(prog + nbInstruction), CHUNK + offset ); */
-  /*     size += CHUNK; */
-  /*   } */
-  /*   memcpy(*(prog + nbInstruction) + offset, &ch, sizeof( char ) ); */
-  /*   offset++; */
-
-  /*   // Newline = new instruction */
-  /*   if(ch == '\n'){ */
-  /*     printf("%s", *(prog + nbInstruction)); */
-  /*     nbInstruction++; */
-  /*     prog = realloc(prog, sizeof(char*) * (nbInstruction+1) ); */
-  /*   } */
-  /* } */
-  char instr[32];
+  int nbLines = 0;
+  int nbWords = 0;
+  char** line = NULL; 
+  char instr[INSTRSIZE];
+  char** words = malloc(sizeof(char*));
+  
   while(fgets(instr, sizeof(instr), fd)){
+    int nbWords = explode( instr, words);
+
     instructions = realloc(instructions, (nbInstruction+1) * sizeof(int));
-    if(instr[0] != '\n'){
-      // Determines OPCODE
-      // Arithmetic operations
-      if(instr[0] == 'A' && instr[1] == 'D' && instr[2] == 'D'){
-        instructions[nbInstruction] = OPCODE(ADD);
-      }
-      else if(instr[0] == 'S' && instr[1] == 'U' && instr[2] == 'B'){
-        instructions[nbInstruction] = OPCODE(SUB);
-      }
-      else if(instr[0] == 'M' && instr[1] == 'U' && instr[2] == 'L'){
-        instructions[nbInstruction] = OPCODE(MUL);
-      }
-      else if(instr[0] == 'D' && instr[1] == 'I' && instr[2] == 'V'){
-        instructions[nbInstruction] = OPCODE(DIV);
-      }
-      // Transfert operations
-      else if(instr[0] == 'M' && instr[1] == 'O' && instr[2] == 'V'){
-        if(instr[4] == 'R'){
-          if(1){
-            instructions[nbInstruction] = OPCODE(MOVV);
-          }
-        }
-        else if(1){
-          instructions[nbInstruction] = OPCODE(MOVV);
-        }
-        else{
-          // trapp
-        }
-      }
-      // Branches
-      else if(instr[0] == 'B' && instr[1] == 'R'){
-        if(instr[2] == ' '){
-          instructions[nbInstruction] = OPCODE(BR);
-        }
-        else if(instr[2] == 'L' && instr[3] == 'T'){
-          instructions[nbInstruction] = OPCODE(BRLT);
-        }
-        else if(instr[2] == 'G' && instr[3] == 'T'){
-          instructions[nbInstruction] = OPCODE(BRGT);
-        }
-        else if(instr[2] == 'E' && instr[3] == 'Q'){
-          instructions[nbInstruction] = OPCODE(BREQ);
-        }
-        else if(instr[2] == 'N' && instr[3] == 'E'){
-          instructions[nbInstruction] = OPCODE(BRNE);
-        }
-        else{
-          // trapp
-        }
-      }
-      nbInstruction++;
-    }
+    instructions[nbInstruction] = translateToOpcode(words[0]);
+    // Determines OPCODE
+    // Arithmetic operations
+    /* if(words[0][0] == 'A' && words[0][1] == 'D' && words[0][2] == 'D'){ */
+    /*   instructions[nbInstruction] = OPCODE(ADD); */
+    /* } */
+    /* else if(words[0][0] == 'S' && words[0][1] == 'U' && words[0][2] == 'B'){ */
+    /*   instructions[nbInstruction] = OPCODE(SUB); */
+    /* } */
+    /* else if(words[0][0] == 'M' && words[0][1] == 'U' && words[0][2] == 'L'){ */
+    /*   instructions[nbInstruction] = OPCODE(MUL); */
+    /* } */
+    /* else if(words[0][0] == 'D' && words[0][1] == 'I' && words[0][2] == 'V'){ */
+    /*   instructions[nbInstruction] = OPCODE(DIV); */
+    /* } */
+    /* // Transfert operations */
+    /* else if(words[0][0] == 'M' && words[0][1] == 'O' && words[0][2] == 'V'){ */
+    /*   if(words[0][4] == 'R'){ */
+    /* 	if(1){ */
+    /* 	  instructions[nbInstruction] = OPCODE(MOVV); */
+    /* 	} */
+    /*   } */
+    /*   else if(1){ */
+    /* 	instructions[nbInstruction] = OPCODE(MOVV); */
+    /*   } */
+    /*   else{ */
+    /* 	// trapp */
+    /*   } */
+    /* } */
+    /* // Branches */
+    /* else if(words[0][0] == 'B' && words[0][1] == 'R'){ */
+    /*   if(words[0][2] == ' '){ */
+    /* 	instructions[nbInstruction] = OPCODE(BR); */
+    /*   } */
+    /*   else if(words[0][2] == 'L' && words[0][3] == 'T'){ */
+    /* 	instructions[nbInstruction] = OPCODE(BRLT); */
+    /*   } */
+    /*   else if(words[0][2] == 'G' && words[0][3] == 'T'){ */
+    /* 	instructions[nbInstruction] = OPCODE(BRGT); */
+    /*   } */
+    /*   else if(words[0][2] == 'E' && words[0][3] == 'Q'){ */
+    /* 	instructions[nbInstruction] = OPCODE(BREQ); */
+    /*   } */
+    /*   else if(words[0][2] == 'N' && words[0][3] == 'E'){ */
+    /* 	instructions[nbInstruction] = OPCODE(BRNE); */
+    /*   } */
+    /*   else{ */
+    /* 	// trapp */
+    /*   } */
+    /* } */
+    nbInstruction++;
   }
 
   for(int i = 0; i < nbInstruction; i++){
