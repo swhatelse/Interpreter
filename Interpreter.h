@@ -5,6 +5,7 @@
 #define CHUNK 8
 #define LINESIZE 32
 #define INSTRSIZE 32
+
 // OPCODE
 #define BR      0b1001  // Unconditionnal branch
 #define BRLT    0b1010  // Cond less than
@@ -20,10 +21,19 @@
 #define MOVRP   0b0001  // mov reg, [reg]
 #define MOVPR   0b1000  // mov [reg], reg
 
+#define FIRST_ARG_MASK ( 0x3FFF << 14)
+#define SECOND_ARG_MASK ( 0x3FFF << 0)
+
+#define GET_FIRST(x)				\
+  (x & FIRST_ARG_MASK ) >> 14
+
+#define GET_SECOND(x)				\
+  (x & SECOND_ARG_MASK) >> 0
+
 #define OPCODE(x)                               \
   x << 27
 
-#define IS(x, opcode)                                  \
+#define IS(x, opcode)					\
   (x & OPCODE(opcode)) == OPCODE(opcode) ? 1 : 0
 
 int* instructions;
