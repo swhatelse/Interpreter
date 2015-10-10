@@ -3,19 +3,27 @@
 #include<string.h>
 
 #define CHUNK 8
-#define BR      0b10010000  // Unconditionnal branch
-#define BRLT    0b10100000  // Cond less than
-#define BRGT    0b11000000  // Cond greater than
-#define BREQ    0b11100000  // Cond equals
-#define BRNOT   0b11110000  // Cond not equals
-#define ADD     0b01000000
-#define SUB     0b01010000
-#define MUL     0b01100000
-#define DIV     0b01110000
-#define MOVV    0b00100000  // mov reg, val
-#define MOVR    0b00110000  // mov reg, reg
-#define MOVRP   0b00010000  // mov reg, [reg]
-#define MOVPR   0b10000000  // mov [reg], reg
+#define BR      0b1001  // Unconditionnal branch
+#define BRLT    0b1010  // Cond less than
+#define BRGT    0b1100  // Cond greater than
+#define BREQ    0b1110  // Cond equals
+#define BRNE    0b1111  // Cond not equals
+#define ADD     0b0100
+#define SUB     0b0101
+#define MUL     0b0110
+#define DIV     0b0111
+#define MOVV    0b0010  // mov reg, val
+#define MOVR    0b0011  // mov reg, reg
+#define MOVRP   0b0001  // mov reg, [reg]
+#define MOVPR   0b1000  // mov [reg], reg
+
+#define OPCODE(x)                               \
+  x << 27
+
+#define IS(x, opcode)                                  \
+  (x & OPCODE(opcode)) == OPCODE(opcode) ? 1 : 0
+
+int* instructions;
 
 void ProgName(char* name);
 char** run(char* progName);

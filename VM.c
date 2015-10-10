@@ -56,7 +56,7 @@ void boot(){
 }
 
 void halt(){
-  printf("Halting now!");
+  printf("Halting now!\n");
 }
 
 int main(int argc, char** argv){

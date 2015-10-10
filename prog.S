@@ -1,2 +1,3 @@
-mov R1 R2
-add R2 0
+MOV R0 0
+ADD R0 1
+BRGT R0 10
