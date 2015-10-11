@@ -16,33 +16,102 @@ void ProgName(char* name){
   }
 }
 
-char** run(char* progName){
-  FILE* fd;
-  char** prog = malloc(sizeof(char*));
-  fd = fopen(progName, "r");
-  char ch;
-  char* instruction = malloc( sizeof( char ) * CHUNK );;
-  int size = 0;
-  int offset = 0;
-  
-  while( EOF != ( ch = fgetc( fd ) ) ){
-    if(offset >= size ){
-      instruction = ( char* ) realloc( instruction, CHUNK + offset );
-      size += CHUNK;
+void run(){
+  *R16 = 0;
+  int current;
+  int opcode = 0;
+  int first_arg = 0;
+  int second_arg = 0;
+
+  for(int i= 0; i < 4; i++){
+    // fetch
+    current = instructions[*R16];
+
+    // decode
+    opcode = GET_OPCODE(current);
+    switch (opcode){
+    case OPCODE(BR):
+      first_arg = GET_FIRST(current);
+      printf("BR\n");
+      br(first_arg);
+      /* execute = br;  */
+      break;
+    case OPCODE(BRLT):
+      first_arg = GET_FIRST(current);
+      second_arg = GET_SECOND(current);
+      printf("BRLT\n");
+      brlt(first_arg, second_arg);
+      break;
+    case OPCODE(BRGT):
+      first_arg = GET_FIRST(current);
+      second_arg = GET_SECOND(current);
+      printf("BRGT\n");
+      brgt(first_arg, second_arg);
+      break;
+    case OPCODE(BREQ):
+      first_arg = GET_FIRST(current);
+      second_arg = GET_SECOND(current);
+      printf("BREQ\n");
+      breq(first_arg, second_arg);
+      break;
+    case OPCODE(BRNE):
+      first_arg = GET_FIRST(current);
+      second_arg = GET_SECOND(current);
+      printf("BRNE\n");
+      brne(first_arg, second_arg);
+      break;
+    case OPCODE(ADD):
+      first_arg = GET_FIRST(current);
+      second_arg = GET_SECOND(current);
+      printf("ADD\n");
+      add(first_arg, second_arg);
+      break;
+    case OPCODE(SUB):
+      first_arg = GET_FIRST(current);
+      second_arg = GET_SECOND(current);
+      printf("SUB\n");
+      sub(first_arg, second_arg);
+      break;
+    case OPCODE(MUL):
+      first_arg = GET_FIRST(current);
+      second_arg = GET_SECOND(current);
+      printf("MUL\n");
+      mul(first_arg, second_arg);
+      break;
+    case OPCODE(DIV):
+      first_arg = GET_FIRST(current);
+      second_arg = GET_SECOND(current);
+      printf("DIV\n");
+      div(first_arg, second_arg);
+      break;
+    case OPCODE(MOVV):
+      first_arg = GET_FIRST(current);
+      second_arg = GET_SECOND(current);
+      printf("MOVV\n");
+      movv(first_arg, second_arg);
+      break;
+    case OPCODE(MOVR):
+      first_arg = GET_FIRST(current);
+      second_arg = GET_SECOND(current);
+      printf("MOVR\n");
+      movr(first_arg, second_arg);
+      break;
+    case OPCODE(MOVRP):
+      first_arg = GET_FIRST(current);
+      second_arg = GET_SECOND(current);
+      printf("MOVRP\n");
+      movrp(first_arg, second_arg);
+      break;
+    case OPCODE(MOVPR):
+      first_arg = GET_FIRST(current);
+      second_arg = GET_SECOND(current);
+      printf("MOVPR\n");
+      movpr(first_arg, second_arg);
+      break;
     }
-    memcpy(instruction + offset, &ch, sizeof( char ) );
-    offset++;
-    // EOL
-    if(ch == '\n'){
-      printf("%s", instruction);
-      offset = 0;
-      size = 0;
-    }
-    
+    (*R16)++;
+    // emulate
   }
-  fclose(fd);
-  free( instruction );
-  return prog;
 }
 
 int explode(const char* line, char** words){
@@ -159,16 +228,13 @@ int translateToOpcode(char** words){
   return opcode;
 }
 
-char** fetch(FILE* fd){
-  char** prog = malloc(sizeof(char*));
-  int nbInstruction = 0;
-  int nbLines = 0;
+int compile(FILE* fd){
   int nbWords = 0;
-  char** line = NULL; 
+  int nbInstruction = 0;
   char instr[INSTRSIZE];
   char** words = malloc(sizeof(char*));
   
-  while(fgets(instr, sizeof(instr), fd)){
+  while(fgets(instr, INSTRSIZE, fd)){
     int nbWords = explode( instr, words);
 
     instructions = realloc(instructions, (nbInstruction+1) * sizeof(int));
@@ -189,9 +255,7 @@ char** fetch(FILE* fd){
     else if(IS(instructions[i], MOVPR)){
       printf("mov %d %d\n", GET_FIRST(instructions[i]), GET_SECOND(instructions[i]));
     }
-
   }
-  
-  /* free( instruction ); */
-  return prog;
+  free(words);
+  return nbInstruction;
 }

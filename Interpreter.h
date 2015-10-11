@@ -1,6 +1,10 @@
+#ifndef INTERPRETER_H 
+#define INTERPRETER_H
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include"VM.h"
 
 #define CHUNK 8
 #define LINESIZE 32
@@ -31,13 +35,22 @@
   (x & SECOND_ARG_MASK) >> 0
 
 #define OPCODE(x)                               \
-  x << 27
+  x << 28
 
-#define IS(x, opcode)					\
-  (x & OPCODE(opcode)) == OPCODE(opcode) ? 1 : 0
+#define GET_OPCODE(x)				\
+  x & (0b1111 << 28)
+
+#define IS(x, opcode)				\
+  x == OPCODE(opcode)
+
+/* #define IS(x, opcode)					\ */
+/*   (x & OPCODE(opcode)) == OPCODE(opcode) ? 1 : 0 */
 
 int* instructions;
 
 void ProgName(char* name);
-char** run(char* progName);
-char** fetch(FILE* fd);
+int compile(FILE* fd);
+void run();
+void (*execute)(int);
+
+#endif

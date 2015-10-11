@@ -1,7 +1,4 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include"Interpreter.h"
+#include"VM.h"
 
 #define NBREGS 15
 #define BUFSIZE 8
@@ -10,53 +7,79 @@
 #define SHELL()                                 \
   printf("\033[32;1mIn the matrix ~/ $ \033[0m")
 
-int* R[NBREGS];
-int* R15;
-int* R16;
-int* R17;
-int* R18;
-int* R19;
-int* R20;
-int* R21;
-
 char RAM[MEMSIZE];
 
-void movReg(int* a, int* b){
-  a = b;
+void movv(int x, int y){
+  R[x] = y;
 }
 
-void movVal(int* a, int val){
-  *a = val;
+void movr(int x, int y){
+  R[x] = R[y];
 }
 
-
-void add(int *regX, int *regY){
-  *regX += *regY;
+void movrp(int x, int y){
+  R[x] = R[R[y]];
 }
 
-void mul(int *regX, int *regY){
-  *regX = *regX * *regY; 
+void movpr(int x, int y){
+  R[R[x]] = R[y];
 }
 
-void sub(int *regX, int *regY){
-  *regX -= *regY;
+void add(int x, int y){
+  R[x] += R[y];
 }
 
-void divide(int *regX, int *regY){
-  *regX = *regX / *regY; 
+void mul(int x, int y){
+  R[x] = R[x] * R[y]; 
 }
 
-void branch(int *reg){
+void sub(int x, int y){
+  R[x] -= R[y];
+}
+
+void divide(int x, int y){
+  R[x] = R[x] / R[y]; 
+}
+
+void br(int x){
 
 }
+
+void brlt(int x, int val){}
+void brgt(int x, int val){}
+void breq(int x, int val){}
+void brne(int x, int val){}
 
 void boot(){
   printf("Booting\n");
+  /* for( int i = 0; i < 15; i++){ */
+  /*   R[i] = malloc(sizeof(int));  */
+  /* } */
+
+  R15 = malloc(sizeof(int));
+  R16 = malloc(sizeof(int));
+  R17 = malloc(sizeof(int));
+  R18 = malloc(sizeof(int));
+  R19 = malloc(sizeof(int));
+  R20 = malloc(sizeof(int));
+  R21 = malloc(sizeof(int));
+
   /* __asm__("JMP 0x1000"); */
 }
 
 void halt(){
   printf("Halting now!\n");
+  /* for( int i = 0; i < 15; i++){ */
+  /*   free(R[i]);  */
+  /* } */
+
+  free(R15);
+  free(R16);
+  free(R17);
+  free(R18);
+  free(R19);
+  free(R20);
+  free(R21);
 }
 
 int main(int argc, char** argv){
@@ -68,8 +91,8 @@ int main(int argc, char** argv){
   ProgName(progName);
   FILE* fd = fopen(progName, "r");
   // Read progamm
-  /* run(progName); */
-  fetch(fd);
+  int nbInstr = compile(fd);
+  run();
   
   // Close programm
   fclose(fd);
