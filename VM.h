@@ -8,7 +8,7 @@
 
 #define NBREGS 15
 
-int R[NBREGS];
+int R[NBREGS]; // Generics registers. R0 is the accumalator.
 int* R15; // SP
 int* R16; // PC
 int* R17;

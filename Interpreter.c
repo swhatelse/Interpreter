@@ -1,6 +1,7 @@
 #include"Interpreter.h"
 
 int* instructions = NULL;
+int nbInstruction;
 
 void ProgName(char* name){
   char ch;
@@ -17,13 +18,13 @@ void ProgName(char* name){
 }
 
 void run(){
-  *R16 = 0;
+  /* *R16 = 0; */
   int current;
   int opcode = 0;
   int first_arg = 0;
   int second_arg = 0;
 
-  for(int i= 0; i < 4; i++){
+  for(*R16 = 0; *R16 < nbInstruction;){
     // fetch
     current = instructions[*R16];
 
@@ -32,86 +33,87 @@ void run(){
     switch (opcode){
     case OPCODE(BR):
       first_arg = GET_FIRST(current);
-      printf("BR\n");
+      printf("BR %d\n", first_arg);
       br(first_arg);
       /* execute = br;  */
       break;
     case OPCODE(BRLT):
       first_arg = GET_FIRST(current);
       second_arg = GET_SECOND(current);
-      printf("BRLT\n");
+      printf("BRLT %d %d\n", first_arg, second_arg);
       brlt(first_arg, second_arg);
       break;
     case OPCODE(BRGT):
       first_arg = GET_FIRST(current);
       second_arg = GET_SECOND(current);
-      printf("BRGT\n");
+      printf("BRGT %d %d\n", first_arg, second_arg);
       brgt(first_arg, second_arg);
       break;
     case OPCODE(BREQ):
       first_arg = GET_FIRST(current);
       second_arg = GET_SECOND(current);
-      printf("BREQ\n");
+      printf("BREQ %d %d\n", first_arg, second_arg);
       breq(first_arg, second_arg);
       break;
     case OPCODE(BRNE):
       first_arg = GET_FIRST(current);
       second_arg = GET_SECOND(current);
-      printf("BRNE\n");
+      printf("BRNE %d %d\n", first_arg, second_arg);
       brne(first_arg, second_arg);
       break;
     case OPCODE(ADD):
       first_arg = GET_FIRST(current);
       second_arg = GET_SECOND(current);
-      printf("ADD\n");
+      printf("ADD %d %d\n", first_arg, second_arg);
       add(first_arg, second_arg);
       break;
     case OPCODE(SUB):
       first_arg = GET_FIRST(current);
       second_arg = GET_SECOND(current);
-      printf("SUB\n");
+      printf("SUB %d %d\n", first_arg, second_arg);
       sub(first_arg, second_arg);
       break;
     case OPCODE(MUL):
       first_arg = GET_FIRST(current);
       second_arg = GET_SECOND(current);
-      printf("MUL\n");
+      printf("MUL %d %d\n", first_arg, second_arg);
       mul(first_arg, second_arg);
       break;
     case OPCODE(DIV):
       first_arg = GET_FIRST(current);
       second_arg = GET_SECOND(current);
-      printf("DIV\n");
+      printf("DIV %d %d\n", first_arg, second_arg);
       div(first_arg, second_arg);
       break;
     case OPCODE(MOVV):
       first_arg = GET_FIRST(current);
       second_arg = GET_SECOND(current);
-      printf("MOVV\n");
+      printf("MOVV %d %d\n", first_arg, second_arg);
       movv(first_arg, second_arg);
       break;
     case OPCODE(MOVR):
       first_arg = GET_FIRST(current);
       second_arg = GET_SECOND(current);
-      printf("MOVR\n");
+      printf("MOVR %d %d\n", first_arg, second_arg);
       movr(first_arg, second_arg);
       break;
     case OPCODE(MOVRP):
       first_arg = GET_FIRST(current);
       second_arg = GET_SECOND(current);
-      printf("MOVRP\n");
+      printf("MOVRP %d %d\n", first_arg, second_arg);
       movrp(first_arg, second_arg);
       break;
     case OPCODE(MOVPR):
       first_arg = GET_FIRST(current);
       second_arg = GET_SECOND(current);
-      printf("MOVPR\n");
+      printf("MOVPR %d %d\n", first_arg, second_arg);
       movpr(first_arg, second_arg);
       break;
     }
-    (*R16)++;
+    /* (*R16)++; */
     // emulate
   }
+  printf("Result = %d\n", R[0]);
 }
 
 int explode(const char* line, char** words){
@@ -230,7 +232,7 @@ int translateToOpcode(char** words){
 
 int compile(FILE* fd){
   int nbWords = 0;
-  int nbInstruction = 0;
+  nbInstruction = 0;
   char instr[INSTRSIZE];
   char** words = malloc(sizeof(char*));
   
@@ -242,20 +244,20 @@ int compile(FILE* fd){
     nbInstruction++;
   }
 
-  for(int i = 0; i < nbInstruction; i++){
-    if(IS(instructions[i], BRGT)){
-      printf("brgt %d %d\n", GET_FIRST(instructions[i]), GET_SECOND(instructions[i]));
-    }
-    else if(IS(instructions[i], ADD)){
-      printf("add %d %d\n", GET_FIRST(instructions[i]), GET_SECOND(instructions[i]));
-    }
-    else if(IS(instructions[i], MOVV)){
-      printf("mov %d %d\n", GET_FIRST(instructions[i]), GET_SECOND(instructions[i]));
-    }
-    else if(IS(instructions[i], MOVPR)){
-      printf("mov %d %d\n", GET_FIRST(instructions[i]), GET_SECOND(instructions[i]));
-    }
-  }
+  /* for(int i = 0; i < nbInstruction; i++){ */
+  /*   if(IS(instructions[i], BRGT)){ */
+  /*     printf("brgt %d %d\n", GET_FIRST(instructions[i]), GET_SECOND(instructions[i])); */
+  /*   } */
+  /*   else if(IS(instructions[i], ADD)){ */
+  /*     printf("add %d %d\n", GET_FIRST(instructions[i]), GET_SECOND(instructions[i])); */
+  /*   } */
+  /*   else if(IS(instructions[i], MOVV)){ */
+  /*     printf("mov %d %d\n", GET_FIRST(instructions[i]), GET_SECOND(instructions[i])); */
+  /*   } */
+  /*   else if(IS(instructions[i], MOVPR)){ */
+  /*     printf("mov %d %d\n", GET_FIRST(instructions[i]), GET_SECOND(instructions[i])); */
+  /*   } */
+  /* } */
   free(words);
   return nbInstruction;
 }
