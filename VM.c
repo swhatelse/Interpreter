@@ -42,10 +42,18 @@ void divide(int x, int y){
 }
 
 void br(int x){
-
+  *R17 = *R16;
 }
 
-void brlt(int x, int val){}
+void brlt(int x, int val){
+  if(reg[x] < val){
+    *R17 = *R16;
+  }
+  else{
+    (*R16)++;
+  }
+}
+
 void brgt(int x, int val){}
 void breq(int x, int val){}
 void brne(int x, int val){}
