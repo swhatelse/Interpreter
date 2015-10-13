@@ -4,6 +4,7 @@
   printf("\033[32;1mIn the matrix ~/ $ \033[0m")
 
 int memSize = 2048;
+int turnOff = 0;
 
 void movv(int x, int y){
   R[x] = y;
@@ -106,7 +107,7 @@ void boot(){
 
 void halt(){
   printf("Halting now!\n");
-
+  turnOff = 1;
   free(R15);
   free(R16);
   free(R17);
@@ -123,21 +124,28 @@ int main(int argc, char** argv){
   
   boot();
 
-  char* progName = malloc( sizeof( char ) * CHUNK );
+  char* progName = NULL;
   
-  // Waiting for a programm
-  SHELL();
-  ProgName(progName);
-  if( strcmp(progName, "halt") > 0){
-    FILE* fd = fopen(progName, "r");
+  while(!turnOff){
+    // Waiting for a programm
+    SHELL();
+
+    ProgName(&progName);
+
+    if( strcmp(progName, "halt") > 0){
+      FILE* fd = fopen(progName, "r");
     
-    int nbInstr = compile(fd);
-    run();
+      int nbInstr = compile(fd);
+      run();
     
-    // Close programm
-    fclose(fd);
+      // Close programm
+      fclose(fd);
+    }
+    else{
+      halt();
+    }
     free( progName );
+    progName = NULL;
   }
-  halt();
   return 0;
 }

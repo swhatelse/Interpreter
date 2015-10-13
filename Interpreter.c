@@ -3,22 +3,26 @@
 int* instructions = NULL;
 int nbInstruction;
 
-void ProgName(char* name){
+void ProgName(char** name){
   char ch;
   int size = 0;
   int offset = 0;
   while( EOF != ( ch = fgetc( stdin ) ) && ch != '\n' ){
     if(offset >= size ){
-      name = ( char* ) realloc( name, CHUNK + offset );
+      *name = ( char* ) realloc( *name, CHUNK + offset );
       size += CHUNK;
     }
-    memcpy(name + offset, &ch, sizeof( char ) );
-    offset++;
+    *(*(name)+offset) = ch;
+    offset++;    
   }
+  if(offset >= size ){
+    *name = ( char* ) realloc( *name, offset );
+    size += CHUNK;
+  }
+  *(*(name)+offset) = '\0';
 }
 
 void run(){
-  /* *R16 = 0; */
   int current;
   int opcode = 0;
   int first_arg = 0;
@@ -242,20 +246,6 @@ int compile(FILE* fd){
     nbInstruction++;
   }
 
-  /* for(int i = 0; i < nbInstruction; i++){ */
-  /*   if(IS(instructions[i], BRGT)){ */
-  /*     printf("brgt %d %d\n", GET_FIRST(instructions[i]), GET_SECOND(instructions[i])); */
-  /*   } */
-  /*   else if(IS(instructions[i], ADD)){ */
-  /*     printf("add %d %d\n", GET_FIRST(instructions[i]), GET_SECOND(instructions[i])); */
-  /*   } */
-  /*   else if(IS(instructions[i], MOVV)){ */
-  /*     printf("mov %d %d\n", GET_FIRST(instructions[i]), GET_SECOND(instructions[i])); */
-  /*   } */
-  /*   else if(IS(instructions[i], MOVPR)){ */
-  /*     printf("mov %d %d\n", GET_FIRST(instructions[i]), GET_SECOND(instructions[i])); */
-  /*   } */
-  /* } */
   free(words);
   return nbInstruction;
 }

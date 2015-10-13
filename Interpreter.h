@@ -48,7 +48,7 @@
 
 int* instructions;
 
-void ProgName(char* name);
+void ProgName(char** name);
 int compile(FILE* fd);
 void run();
 
