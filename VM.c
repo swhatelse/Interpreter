@@ -1,13 +1,9 @@
 #include"VM.h"
 
-#define NBREGS 15
-#define BUFSIZE 8
-#define MEMSIZE 128
-
 #define SHELL()                                 \
   printf("\033[32;1mIn the matrix ~/ $ \033[0m")
 
-char RAM[MEMSIZE];
+int memSize = 2048;
 
 void movv(int x, int y){
   R[x] = y;
@@ -96,9 +92,8 @@ void brne(int x, int val){
 
 void boot(){
   printf("Booting\n");
-  /* for( int i = 0; i < 15; i++){ */
-  /*   R[i] = malloc(sizeof(int));  */
-  /* } */
+  
+  memory = malloc(memSize);
 
   R15 = malloc(sizeof(int));
   R16 = malloc(sizeof(int));
@@ -107,15 +102,10 @@ void boot(){
   R19 = malloc(sizeof(int));
   R20 = malloc(sizeof(int));
   R21 = malloc(sizeof(int));
-
-  /* __asm__("JMP 0x1000"); */
 }
 
 void halt(){
   printf("Halting now!\n");
-  /* for( int i = 0; i < 15; i++){ */
-  /*   free(R[i]);  */
-  /* } */
 
   free(R15);
   free(R16);
@@ -127,21 +117,27 @@ void halt(){
 }
 
 int main(int argc, char** argv){
+  if(argc == 2){
+    memSize = atoi(argv[1]);
+  }
+  
   boot();
+
   char* progName = malloc( sizeof( char ) * CHUNK );
   
   // Waiting for a programm
   SHELL();
   ProgName(progName);
-  FILE* fd = fopen(progName, "r");
-  // Read progamm
-  int nbInstr = compile(fd);
-  run();
-  
-  // Close programm
-  fclose(fd);
-  free( progName );
-
+  if( strcmp(progName, "halt") > 0){
+    FILE* fd = fopen(progName, "r");
+    
+    int nbInstr = compile(fd);
+    run();
+    
+    // Close programm
+    fclose(fd);
+    free( progName );
+  }
   halt();
   return 0;
 }

@@ -110,8 +110,6 @@ void run(){
       movpr(first_arg, second_arg);
       break;
     }
-    /* (*R16)++; */
-    // emulate
   }
   printf("Result = %d\n", R[0]);
 }

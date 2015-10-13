@@ -51,6 +51,5 @@ int* instructions;
 void ProgName(char* name);
 int compile(FILE* fd);
 void run();
-void (*execute)(int);
 
 #endif
