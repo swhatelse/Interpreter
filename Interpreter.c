@@ -118,7 +118,8 @@ void run(){
   printf("Result = %d\n", R[0]);
 }
 
-int explode(const char* line, char** words){
+/* int explode(const char* line, char** words){ */
+int explode(const char* line, char*** words){
   int nbWords = 0;
   int nbChars = 0;
   int i = 0;
@@ -127,12 +128,19 @@ int explode(const char* line, char** words){
   while(line[i] != '\0'){
     // first count the number of characters of a word and then copy it
     if(line[i] == ' ' || line[i] == '\n'){
-      words = realloc(words, sizeof(char*) * nbWords +1);
-      *(words + nbWords) = realloc(*(words + nbWords), sizeof(char)*nbChars + 1);
+      /* words = realloc(words, sizeof(char*) * nbWords +1); */
+      /* *(words + nbWords) = realloc(*(words + nbWords), sizeof(char)*nbChars + 1); */
+      *words = realloc(*words, sizeof(char*) * (nbWords + 1));
+      /* *(*(words) + nbWords) = realloc(*(*(words) + nbWords), sizeof(char)*nbChars + 1); */
+      /* words[nbWords] = realloc(words[nbWords], sizeof(char)*nbChars + 1); */
+      *words+nbWords = realloc(*words+nbWords, sizeof(char)*nbChars + 1);
+
       for(int j = beg, k = 0; j < i; j++, k++){
-	*(*(words + nbWords)+k) = line[j];
+	/* *(*(*(words) + nbWords)+k) = line[j]; */
+	*(*(*(words) + nbWords) + k) = line[j];
       }
-      *(*(words + nbWords)+nbChars) = '\0';
+          /* *(*(*(words) + nbWords)+nbChars) = '\0'; */
+          *(*(*(words) + nbWords) + nbChars) = '\0';
       nbWords++;
       nbChars = 0;
       beg = i + 1;
@@ -239,7 +247,8 @@ int compile(FILE* fd){
   char** words = malloc(sizeof(char*));
   
   while(fgets(instr, INSTRSIZE, fd)){
-    int nbWords = explode( instr, words);
+    /* int nbWords = explode( instr, words); */
+    int nbWords = explode( instr, &words);
 
     instructions = realloc(instructions, (nbInstruction+1) * sizeof(int));
     instructions[nbInstruction] = translateToOpcode(words);
