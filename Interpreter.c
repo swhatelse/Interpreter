@@ -3,6 +3,8 @@
 int* instructions = NULL;
 int nbInstruction;
 
+// Read a line from the command line to get the name of the program
+// and store it into name. Name must be free'd at the end.
 void ProgName(char** name){
   char ch;
   int size = 0;
@@ -22,6 +24,40 @@ void ProgName(char** name){
   *(*(name)+offset) = '\0';
 }
 
+// Take instruction in input by using line and separate each words of the instruction
+// in an array. words must be free'd at the end.
+// Returns the number of words in the instruction written in the array.
+int explode(const char* line, char*** words){
+  int nbWords = 0;
+  int nbChars = 0;
+  int i = 0;
+  int beg = 0;
+
+  while(line[i] != '\0'){
+    // first count the number of characters of a word and then copy it
+    if(line[i] == ' ' || line[i] == '\n'){
+      *words = realloc(*words, sizeof(char*) * (nbWords + 1));
+      (*words)[nbWords] = realloc((*words)[nbWords], sizeof(char)*nbChars + 1);
+
+      for(int j = beg, k = 0; j < i; j++, k++){
+        (*words)[nbWords][k] = line[j];
+      }
+      (*words)[nbWords][nbChars] = '\0';
+      nbWords++;
+      nbChars = 0;
+      beg = i + 1;
+    }
+    else{
+      nbChars++;
+    }
+    i++;
+  }
+
+  return nbWords;
+}
+
+// Emulate the program previously compile by the function compile and stored 
+// in the variable instruction. 
 void run(){
   int current;
   int opcode = 0;
@@ -39,7 +75,6 @@ void run(){
       first_arg = GET_FIRST(current);
       printf("BR %d\n", first_arg);
       br(first_arg);
-      /* execute = br;  */
       break;
     case OPCODE(BRLT):
       first_arg = GET_FIRST(current);
@@ -118,42 +153,9 @@ void run(){
   printf("Result = %d\n", R[0]);
 }
 
-/* int explode(const char* line, char** words){ */
-int explode(const char* line, char*** words){
-  int nbWords = 0;
-  int nbChars = 0;
-  int i = 0;
-  int beg = 0;
-
-  while(line[i] != '\0'){
-    // first count the number of characters of a word and then copy it
-    if(line[i] == ' ' || line[i] == '\n'){
-      /* words = realloc(words, sizeof(char*) * nbWords +1); */
-      /* *(words + nbWords) = realloc(*(words + nbWords), sizeof(char)*nbChars + 1); */
-      *words = realloc(*words, sizeof(char*) * (nbWords + 1));
-      /* *(*(words) + nbWords) = realloc(*(*(words) + nbWords), sizeof(char)*nbChars + 1); */
-      /* words[nbWords] = realloc(words[nbWords], sizeof(char)*nbChars + 1); */
-      *words+nbWords = realloc(*words+nbWords, sizeof(char)*nbChars + 1);
-
-      for(int j = beg, k = 0; j < i; j++, k++){
-	/* *(*(*(words) + nbWords)+k) = line[j]; */
-	*(*(*(words) + nbWords) + k) = line[j];
-      }
-          /* *(*(*(words) + nbWords)+nbChars) = '\0'; */
-          *(*(*(words) + nbWords) + nbChars) = '\0';
-      nbWords++;
-      nbChars = 0;
-      beg = i + 1;
-    }
-    else{
-      nbChars++;
-    }
-    i++;
-  }
-
-  return nbWords;
-}
-
+// Convert the instruction store in words in opcode.
+// Return the corresponding opcode.
+// TODO manage traps when instruction does not exist.
 int translateToOpcode(char** words){
   int opcode = 0;
   if(words[0][0] == 'A' && words[0][1] == 'D' && words[0][2] == 'D'){
@@ -247,7 +249,6 @@ int compile(FILE* fd){
   char** words = malloc(sizeof(char*));
   
   while(fgets(instr, INSTRSIZE, fd)){
-    /* int nbWords = explode( instr, words); */
     int nbWords = explode( instr, &words);
 
     instructions = realloc(instructions, (nbInstruction+1) * sizeof(int));
