@@ -156,7 +156,7 @@ void run(){
 // Convert the instruction store in words in opcode.
 // Return the corresponding opcode.
 // TODO manage traps when instruction does not exist.
-int translateToOpcode(char** words){
+int translateToBinary(char** words){
   int opcode = 0;
   if(words[0][0] == 'A' && words[0][1] == 'D' && words[0][2] == 'D'){
     opcode = OPCODE(ADD);
@@ -242,6 +242,9 @@ int translateToOpcode(char** words){
   return opcode;
 }
 
+// Convert an assembly file fd in a set of binary instruction.
+// fd must be opened and closed manually.
+// Returns the number of instructions.
 int compile(FILE* fd){
   int nbWords = 0;
   nbInstruction = 0;
@@ -252,7 +255,7 @@ int compile(FILE* fd){
     int nbWords = explode( instr, &words);
 
     instructions = realloc(instructions, (nbInstruction+1) * sizeof(int));
-    instructions[nbInstruction] = translateToOpcode(words);
+    instructions[nbInstruction] = translateToBinary(words);
     nbInstruction++;
   }
 

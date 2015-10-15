@@ -6,11 +6,12 @@
 #include<string.h>
 #include"VM.h"
 
-#define CHUNK 8
+#define CHUNK 8 // Size of the buffer to read the program name
 #define LINESIZE 32
-#define INSTRSIZE 32
+#define INSTRSIZE 32 // Size of an instruction
 
 // OPCODE
+// Size of the opcode is 4 bits and are strong weight bits.
 #define BR      0b1001  // Unconditionnal branch
 #define BRLT    0b1010  // Cond less than
 #define BRGT    0b1100  // Cond greater than
@@ -25,26 +26,30 @@
 #define MOVRP   0b0001  // mov reg, [reg]
 #define MOVPR   0b1000  // mov [reg], reg
 
+// Isolate the first argument from a binary instruction
 #define FIRST_ARG_MASK ( 0x3FFF << 14)
+// Isolate the second argument from a binary instruction
 #define SECOND_ARG_MASK ( 0x3FFF << 0)
 
+// Extract the first argument from a binary instruction
 #define GET_FIRST(x)				\
   (x & FIRST_ARG_MASK ) >> 14
 
+// Extract the second argument from a binary instruction
 #define GET_SECOND(x)				\
   (x & SECOND_ARG_MASK) >> 0
 
+// Place the opcode at the end of the instruction.
 #define OPCODE(x)                               \
   x << 28
 
+// Isolate the opcode
 #define GET_OPCODE(x)				\
   x & (0b1111 << 28)
 
+// Allow to know which kind of instruction is x by comparing it with an opcode
 #define IS(x, opcode)				\
   x == OPCODE(opcode)
-
-/* #define IS(x, opcode)					\ */
-/*   (x & OPCODE(opcode)) == OPCODE(opcode) ? 1 : 0 */
 
 int* instructions;
 
