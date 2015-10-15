@@ -255,7 +255,8 @@ int compile(FILE* fd){
   while(fgets(instr, INSTRSIZE, fd)){
     int nbWords = explode( instr, &words);
 
-    instructions = realloc(instructions, (nbInstruction+1) * sizeof(int));
+    /* instructions = realloc(instructions, (nbInstruction+1) * sizeof(int)); */
+    instructions = (int*) beginOfMem;
     instructions[nbInstruction] = translateToBinary(words);
     nbInstruction++;
   }
@@ -269,17 +270,14 @@ int main(int argc, char** argv){
 
   while( ( opt = getopt( argc, argv, "hm:" ) ) != -1 ){
     switch( opt ){
-    
     case 'h':
       fprintf(stderr, "Usage: %s [-h/m]\n \t\t- m : Memory size in bytes\n \t\t- h : help\n",
               argv[0]);
       exit(EXIT_FAILURE);
       break;
-    
     case 'm':
       memSize = atoi(optarg);
-      break;
-    
+      break;    
     default:
       break;
     }
@@ -292,12 +290,10 @@ int main(int argc, char** argv){
   while(!turnOff){
     // Waiting for a programm
     SHELL();
-
     ProgName(&progName);
 
     if( strcmp(progName, "halt") > 0){
-      FILE* fd = fopen(progName, "r");
-    
+      FILE* fd = fopen(progName, "r");    
       int nbInstr = compile(fd);
       run();
     

@@ -19,6 +19,7 @@ int* R21; // Interrupt mask
 
 void* memory; // RAM
 int memSize;
+void* beginOfMem;
 
 // Branch
 void br(int x);
