@@ -18,6 +18,7 @@ int* R20; // IRQ
 int* R21; // Interrupt mask
 
 void* memory; // RAM
+int memSize;
 
 // Branch
 void br(int x);
@@ -38,4 +39,6 @@ void movr(int x, int y);
 void movrp(int x, int y);
 void movpr(int x, int y);
 
+void boot();
+void halt();
 #endif

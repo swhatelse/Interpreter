@@ -2,6 +2,7 @@
 
 int* instructions = NULL;
 int nbInstruction;
+int turnOff = 0;
 
 // Read a line from the command line to get the name of the program
 // and store it into name. Name must be free'd at the end.
@@ -261,4 +262,53 @@ int compile(FILE* fd){
 
   free(words);
   return nbInstruction;
+}
+
+int main(int argc, char** argv){
+  int opt;
+
+  while( ( opt = getopt( argc, argv, "hm:" ) ) != -1 ){
+    switch( opt ){
+    
+    case 'h':
+      fprintf(stderr, "Usage: %s [-h/m]\n \t\t- m : Memory size in bytes\n \t\t- h : help\n",
+              argv[0]);
+      exit(EXIT_FAILURE);
+      break;
+    
+    case 'm':
+      memSize = atoi(optarg);
+      break;
+    
+    default:
+      break;
+    }
+  }
+  
+  boot();
+
+  char* progName = NULL;
+  
+  while(!turnOff){
+    // Waiting for a programm
+    SHELL();
+
+    ProgName(&progName);
+
+    if( strcmp(progName, "halt") > 0){
+      FILE* fd = fopen(progName, "r");
+    
+      int nbInstr = compile(fd);
+      run();
+    
+      // Close programm
+      fclose(fd);
+    }
+    else{
+      halt();
+    }
+    free( progName );
+    progName = NULL;
+  }
+  return 0;
 }

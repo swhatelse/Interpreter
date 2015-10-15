@@ -1,7 +1,7 @@
 #include"VM.h"
+#include<getopt.h>
 
 int memSize = 2048;
-int turnOff = 0;
 
 void movv(int x, int y){
   R[x] = y;
@@ -114,35 +114,51 @@ void halt(){
   free(R21);
 }
 
-int main(int argc, char** argv){
-  if(argc == 2){
-    memSize = atoi(argv[1]);
-  }
-  
-  boot();
+/* int main(int argc, char** argv){ */
+/*   int opt; */
 
-  char* progName = NULL;
-  
-  while(!turnOff){
-    // Waiting for a programm
-    SHELL();
-
-    ProgName(&progName);
-
-    if( strcmp(progName, "halt") > 0){
-      FILE* fd = fopen(progName, "r");
+/*   while( ( opt = getopt( argc, argv, "hm:" ) ) != -1 ){ */
+/*     switch( opt ){ */
     
-      int nbInstr = compile(fd);
-      run();
+/*     case 'h': */
+/*       fprintf(stderr, "Usage: %s [-h/m]\n \t\t- m : Memory size in bytes\n \t\t- h : help\n", */
+/*               argv[0]); */
+/*       exit(EXIT_FAILURE); */
+/*       break; */
     
-      // Close programm
-      fclose(fd);
-    }
-    else{
-      halt();
-    }
-    free( progName );
-    progName = NULL;
-  }
-  return 0;
-}
+/*     case 'm': */
+/*       memSize = atoi(optarg); */
+/*       break; */
+    
+/*     default: */
+/*       break; */
+/*     } */
+/*   } */
+  
+/*   boot(); */
+
+/*   char* progName = NULL; */
+  
+/*   while(!turnOff){ */
+/*     // Waiting for a programm */
+/*     SHELL(); */
+
+/*     ProgName(&progName); */
+
+/*     if( strcmp(progName, "halt") > 0){ */
+/*       FILE* fd = fopen(progName, "r"); */
+    
+/*       int nbInstr = compile(fd); */
+/*       run(); */
+    
+/*       // Close programm */
+/*       fclose(fd); */
+/*     } */
+/*     else{ */
+/*       halt(); */
+/*     } */
+/*     free( progName ); */
+/*     progName = NULL; */
+/*   } */
+/*   return 0; */
+/* } */

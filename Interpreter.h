@@ -4,6 +4,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<getopt.h>
 #include"VM.h"
 
 #define CHUNK 8 // Size of the buffer to read the program name
@@ -55,6 +56,7 @@
   printf("\033[32;1mIn the matrix ~/ $ \033[0m")
 
 int* instructions;
+int turnOff;
 
 void ProgName(char** name);
 int compile(FILE* fd);
