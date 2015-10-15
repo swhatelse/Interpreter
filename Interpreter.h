@@ -51,6 +51,9 @@
 #define IS(x, opcode)				\
   x == OPCODE(opcode)
 
+#define SHELL()                                 \
+  printf("\033[32;1mIn the matrix ~/ $ \033[0m")
+
 int* instructions;
 
 void ProgName(char** name);

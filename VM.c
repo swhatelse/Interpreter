@@ -1,8 +1,5 @@
 #include"VM.h"
 
-#define SHELL()                                 \
-  printf("\033[32;1mIn the matrix ~/ $ \033[0m")
-
 int memSize = 2048;
 int turnOff = 0;
 
