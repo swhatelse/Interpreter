@@ -267,6 +267,7 @@ int compile(FILE* fd){
 
 int main(int argc, char** argv){
   int opt;
+  char* progName = NULL;
 
   while( ( opt = getopt( argc, argv, "hm:" ) ) != -1 ){
     switch( opt ){
@@ -282,10 +283,9 @@ int main(int argc, char** argv){
       break;
     }
   }
-  
-  boot();
 
-  char* progName = NULL;
+  memSize *= 1024;
+  boot();
   
   while(!turnOff){
     // Waiting for a programm
@@ -296,7 +296,6 @@ int main(int argc, char** argv){
       FILE* fd = fopen(progName, "r");    
       int nbInstr = compile(fd);
       run();
-    
       // Close programm
       fclose(fd);
     }

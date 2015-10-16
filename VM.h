@@ -10,20 +10,13 @@
 #define PAGESIZE 4096
 
 int R[NBREGS]; // Generics registers. R0 is the accumalator.
-/* int* R15; // SP */
-/* int* R16; // PC */
-/* int* R17; // Link register */
-/* int* R18; // Status register */
-/* int* R19; // Page table */
-/* int* R20; // IRQ */
-/* int* R21; // Interrupt mask */
 
 int R15; // SP
 int R16; // PC
 int R17; // Link register
 int R18; // Status register
 int R19; // Page table
-int R20; // IRQ
+int R20[32]; // IRQ
 int R21; // Interrupt mask
 
 
