@@ -7,19 +7,31 @@
 #include"Interpreter.h"
 
 #define NBREGS 15
+#define PAGESIZE 4096
 
 int R[NBREGS]; // Generics registers. R0 is the accumalator.
-int* R15; // SP
-int* R16; // PC
-int* R17; // Link register
-int* R18; // Status register
-int* R19; // Page table
-int* R20; // IRQ
-int* R21; // Interrupt mask
+/* int* R15; // SP */
+/* int* R16; // PC */
+/* int* R17; // Link register */
+/* int* R18; // Status register */
+/* int* R19; // Page table */
+/* int* R20; // IRQ */
+/* int* R21; // Interrupt mask */
 
+int R15; // SP
+int R16; // PC
+int R17; // Link register
+int R18; // Status register
+int R19; // Page table
+int R20; // IRQ
+int R21; // Interrupt mask
+
+
+int pageTableSize;
+void* pageTable; 
 void* memory; // RAM
-int memSize;
-void* beginOfMem;
+int memSize; // Size of RAM
+void* beginOfMem; // Address at boot
 
 // Branch
 void br(int x);

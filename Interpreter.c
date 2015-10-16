@@ -65,9 +65,9 @@ void run(){
   int first_arg = 0;
   int second_arg = 0;
 
-  for(*R16 = 0; *R16 < nbInstruction;){
+  for(R16 = 0; R16 < nbInstruction;){
     // fetch
-    current = instructions[*R16];
+    current = instructions[R16];
 
     // decode
     opcode = GET_OPCODE(current);
