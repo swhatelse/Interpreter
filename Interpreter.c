@@ -38,7 +38,8 @@ int explode(const char* line, char*** words){
     // first count the number of characters of a word and then copy it
     if(line[i] == ' ' || line[i] == '\n'){
       *words = realloc(*words, sizeof(char*) * (nbWords + 1));
-      (*words)[nbWords] = realloc((*words)[nbWords], sizeof(char)*nbChars + 1);
+      /* (*words)[nbWords] = realloc((*words)[nbWords], sizeof(char)*nbChars + 1); */
+      (*words)[nbWords] = malloc(sizeof(char)*nbChars + 1);
 
       for(int j = beg, k = 0; j < i; j++, k++){
         (*words)[nbWords][k] = line[j];
@@ -161,22 +162,22 @@ int translateToBinary(char** words){
   int opcode = 0;
   if(words[0][0] == 'A' && words[0][1] == 'D' && words[0][2] == 'D'){
     opcode = OPCODE(ADD);
-    opcode += strtol(&words[1][1], NULL, 10) << 14; 
+    opcode += strtol(&words[1][1], NULL, 10) << (INSTRSIZE - OPCODESIZE) / 2; 
     opcode += strtol(&words[2][1], NULL, 10);      
   }
   else if(words[0][0] == 'S' && words[0][1] == 'U' && words[0][2] == 'B'){
     opcode = OPCODE(SUB);
-    opcode += strtol(&words[1][1], NULL, 10) << 14; 
+    opcode += strtol(&words[1][1], NULL, 10) << (INSTRSIZE - OPCODESIZE) / 2; 
     opcode += strtol(&words[2][1], NULL, 10);      
   }
   else if(words[0][0] == 'M' && words[0][1] == 'U' && words[0][2] == 'L'){
     opcode = OPCODE(MUL);
-    opcode += strtol(&words[1][1], NULL, 10) << 14; 
+    opcode += strtol(&words[1][1], NULL, 10) << (INSTRSIZE - OPCODESIZE) / 2; 
     opcode += strtol(&words[2][1], NULL, 10);      
   }
   else if(words[0][0] == 'D' && words[0][1] == 'I' && words[0][2] == 'V'){
     opcode = OPCODE(DIV);
-    opcode += strtol(&words[1][1], NULL, 10) << 14; 
+    opcode += strtol(&words[1][1], NULL, 10) << (INSTRSIZE - OPCODESIZE) / 2; 
     opcode += strtol(&words[2][1], NULL, 10);      
   }
   // Transfert operations
@@ -184,17 +185,17 @@ int translateToBinary(char** words){
     if(words[1][0] == 'R') {
       if(words[2][0] != 'R' && words[2][0] != '['){
 	opcode = OPCODE(MOVV);
-	opcode += strtol(&words[1][1], NULL, 10) << 14; 
+	opcode += strtol(&words[1][1], NULL, 10) << (INSTRSIZE - OPCODESIZE) / 2; 
 	opcode += strtol(&words[2][0], NULL, 10);      
       }
       else if(words[2][0] == 'R'){
 	opcode = OPCODE(MOVR);
-	opcode += strtol(&words[1][1], NULL, 10) << 14; 
+	opcode += strtol(&words[1][1], NULL, 10) << (INSTRSIZE - OPCODESIZE) / 2; 
 	opcode += strtol(&words[2][1], NULL, 10);      
       }
       else if(words[2][0] == '['){
 	opcode = OPCODE(MOVRP);
-	opcode += strtol(&words[1][1], NULL, 10) << 14; 
+	opcode += strtol(&words[1][1], NULL, 10) << (INSTRSIZE - OPCODESIZE) / 2; 
 	opcode += strtol(&words[2][2], NULL, 10);      
       }
       else{
@@ -203,7 +204,7 @@ int translateToBinary(char** words){
     }
     else if(words[1][0] == '['){
       opcode = OPCODE(MOVPR);
-      opcode += strtol(&words[1][2], NULL, 10) << 14; 
+      opcode += strtol(&words[1][2], NULL, 10) << (INSTRSIZE - OPCODESIZE) / 2; 
       opcode += strtol(&words[2][1], NULL, 10);      
     }
     else{
@@ -214,26 +215,26 @@ int translateToBinary(char** words){
   else if(words[0][0] == 'B' && words[0][1] == 'R'){
     if(strlen(words[0]) < 3){
       opcode = OPCODE(BR);
-      opcode += strtol(&words[1][1], NULL, 10) << 14; 
+      opcode += strtol(&words[1][1], NULL, 10) << (INSTRSIZE - OPCODESIZE) / 2; 
     }
     else if(words[0][2] == 'L' && words[0][3] == 'T'){
       opcode = OPCODE(BRLT);
-      opcode += strtol(&words[1][1], NULL, 10) << 14; 
+      opcode += strtol(&words[1][1], NULL, 10) << (INSTRSIZE - OPCODESIZE) / 2; 
       opcode += strtol(&words[2][0], NULL, 10);      
     }
     else if(words[0][2] == 'G' && words[0][3] == 'T'){
       opcode = OPCODE(BRGT);
-      opcode += strtol(&words[1][1], NULL, 10) << 14; 
+      opcode += strtol(&words[1][1], NULL, 10) << (INSTRSIZE - OPCODESIZE) / 2; 
       opcode += strtol(&words[2][0], NULL, 10);      
     }
     else if(words[0][2] == 'E' && words[0][3] == 'Q'){
       opcode = OPCODE(BREQ);
-      opcode += strtol(&words[1][1], NULL, 10) << 14; 
+      opcode += strtol(&words[1][1], NULL, 10) << (INSTRSIZE - OPCODESIZE) / 2; 
       opcode += strtol(&words[2][0], NULL, 10);      
     }
     else if(words[0][2] == 'N' && words[0][3] == 'E'){
       opcode = OPCODE(BRNE);
-      opcode += strtol(&words[1][1], NULL, 10) << 14; 
+      opcode += strtol(&words[1][1], NULL, 10) << (INSTRSIZE - OPCODESIZE) / 2; 
       opcode += strtol(&words[2][0], NULL, 10);      
     }
     else{
@@ -247,20 +248,25 @@ int translateToBinary(char** words){
 // fd must be opened and closed manually.
 // Returns the number of instructions.
 int compile(FILE* fd){
-  int nbWords = 0;
   nbInstruction = 0;
   char instr[INSTRSIZE];
-  char** words = malloc(sizeof(char*));
-  
+  char** words = NULL;
+  int* binary = NULL;
+
   while(fgets(instr, INSTRSIZE, fd)){
     int nbWords = explode( instr, &words);
 
-    /* instructions = realloc(instructions, (nbInstruction+1) * sizeof(int)); */
-    instructions = (int*) beginOfMem;
-    instructions[nbInstruction] = translateToBinary(words);
+    binary = realloc(binary, (nbInstruction+1) * sizeof(int));
+    binary[nbInstruction] = translateToBinary(words);
+    for(int i = 0; i < nbWords; i++){
+      free(words[i]);
+    }
     nbInstruction++;
   }
 
+  instructions = (int*) beginOfMem;
+  instructions = memcpy(instructions, binary, nbInstruction*sizeof(int));
+  free(binary);
   free(words);
   return nbInstruction;
 }
@@ -271,7 +277,7 @@ int main(int argc, char** argv){
   while( ( opt = getopt( argc, argv, "hm:" ) ) != -1 ){
     switch( opt ){
     case 'h':
-      fprintf(stderr, "Usage: %s [-h/m]\n \t\t- m : Memory size in bytes\n \t\t- h : help\n",
+      fprintf(stderr, "Usage: %s [-h/m]\n \t\t- m : Memory size in bytes at less 5120 default is 8192\n \t\t- h : help\n",
               argv[0]);
       exit(EXIT_FAILURE);
       break;
@@ -294,11 +300,17 @@ int main(int argc, char** argv){
 
     if( strcmp(progName, "halt") > 0){
       FILE* fd = fopen(progName, "r");    
-      int nbInstr = compile(fd);
-      run();
-    
-      // Close programm
-      fclose(fd);
+      if(fd){
+        pageTable = malloc(MAXPROGSIZE / PAGESIZE);
+        compile(fd);
+        run();
+        free(pageTable);
+        // Close programm
+        fclose(fd);
+      }
+      else{
+        printf("%s doesn't exist.\n", progName);
+      }
     }
     else{
       halt();
