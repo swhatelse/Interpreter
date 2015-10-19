@@ -90,11 +90,36 @@ void brne(int instr, int val){
   }
 }
 
+// Convert virtual address to physical addr
 address getPhysicalAddress(address virt){
   int index = GET_INDEX(virt);
   int offset = GET_OFFSET(virt);
-  address physical = (address)((pageTable[index] << 12) + offset);
+  address physical = (address)((pageTable[index] << (ADDRSIZE - PAGECODESIZE)) + offset);
   return physical;
+}
+
+// Ask for a page in physical memory
+// Return the pointer to the begining 
+// of the page
+address getPhysicalPage(){
+  address page = 0;
+  for(int i = 0; i < frameTableSize; i++){
+    if(frameTable[i] == 0){
+      frameTable[i] = 1;
+      page = i << (ADDRSIZE - PAGECODESIZE);
+    }
+  }
+  return page;
+}
+
+address getVirtualPage(){
+  address page = 0;
+  for(int i = 0; i < MAXPROGSIZE / PAGESIZE; i++){
+    if(pageTable[i]){
+      pageTable[i] = getPhysicalPage();
+    }
+  }
+  return page;
 }
 
 void boot(){
@@ -102,7 +127,8 @@ void boot(){
   
   memory = malloc(memSize);
   beginOfMem = memory + 0x1000;
-  frameTable = malloc((memSize - 0x1000) / PAGESIZE);
+  frameTableSize = (memSize - 0x1000) / PAGESIZE;
+  frameTable = malloc(frameTableSize);
 }
 
 void halt(){

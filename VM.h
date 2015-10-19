@@ -62,6 +62,8 @@ void store(int reg, int addr);
 /*************************** Memory *************************/
 #define PAGESIZE 4096
 #define MAXPROGSIZE PAGESIZE * 4
+#define ADDRSIZE 16
+#define PAGECODESIZE 4
 
 #define GET_INDEX(addr)                         \
   addr & (0xfffff << 12)
@@ -73,6 +75,7 @@ typedef uint32_t address;
 
 char* pageTable;
 char* frameTable; // Used to know if a physical page is already in use.
+int frameTableSize;
 void* memory; // RAM
 int memSize; // Size of RAM
 void* beginOfMem; // Address at boot
