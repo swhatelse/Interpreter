@@ -1,7 +1,7 @@
 #include"VM.h"
 #include<getopt.h>
 
-int memSize = 1024;
+int memSize = 1024 * 5;
 void* beginOfMem = NULL;
 void* memory = NULL;
 
@@ -45,65 +45,95 @@ void divide(int x, int y){
   R16++;
 }
 
-void br(int x){
+void br(int instr){
   R17 = R16;
-  R16 = x;
+  R16 = instr;
 }
 
-void brlt(int x, int val){
+void brlt(int instr, int val){
   if(R[0] < val){
     R17 = R16;
-    R16 = x;
+    R16 = instr;
   }
   else{
     R16++;
   }
 }
 
-void brgt(int x, int val){
+void brgt(int instr, int val){
  if(R[0] > val){
     R17 = R16;
-    R16 = x;
+    R16 = instr;
   }
   else{
     R16++;
   }
 }
 
-void breq(int x, int val){
+void breq(int instr, int val){
  if(R[0] == val){
     R17 = R16;
-    R16 = x;
+    R16 = instr;
   }
   else{
     R16++;
   }
 }
 
-void brne(int x, int val){
+void brne(int instr, int val){
  if(R[0] != val){
     R17 = R16;
-    R16 = x;
+    R16 = instr;
   }
   else{
     R16++;
   }
+}
+
+// Convert virtual address to physical addr
+address getPhysicalAddress(address virt){
+  int index = GET_INDEX(virt);
+  int offset = GET_OFFSET(virt);
+  address physical = (address)((pageTable[index] << (ADDRSIZE - PAGECODESIZE)) + offset);
+  return physical;
+}
+
+// Ask for a page in physical memory
+// Return the pointer to the begining 
+// of the page
+address getPhysicalPage(){
+  address page = 0;
+  for(int i = 0; i < frameTableSize; i++){
+    if(frameTable[i] == 0){
+      frameTable[i] = 1;
+      page = i << (ADDRSIZE - PAGECODESIZE);
+    }
+  }
+  return page;
+}
+
+address getVirtualPage(){
+  address page = 0;
+  for(int i = 0; i < MAXPROGSIZE / PAGESIZE; i++){
+    if(pageTable[i]){
+      pageTable[i] = getPhysicalPage();
+    }
+  }
+  return page;
 }
 
 void boot(){
   printf("Booting\n");
   
-  memory = malloc(memSize * 1024);
+  memory = malloc(memSize);
   beginOfMem = memory + 0x1000;
-  pageTableSize = (memSize - 0x1000) / PAGESIZE;
-  pageTable = malloc(pageTableSize);
-  printf("Available memory : %d\n", memSize);
+  frameTableSize = (memSize - 0x1000) / PAGESIZE;
+  frameTable = malloc(frameTableSize);
 }
 
 void halt(){
   printf("Halting now!\n");
   turnOff = 1;
-
   free(memory);
-  free(pageTable);
+  free(frameTable);
 }
