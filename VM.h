@@ -61,10 +61,14 @@ void store(int reg, int addr); // Not implemented yet
 /*************************** Memory *************************/
 #define PAGESIZE 4096
 #define PAGECODESIZE 6 // Size of the page number in the bits field
-#define PTSIZE 64 // Number of entry in the page table
+#define PTSIZE 16 // Number of entry in the page table
 #define PTESIZE 8
 #define MAXPROGSIZE PAGESIZE * PTSIZE
 #define ADDRSIZE 16
+// Protection code
+#define RD 0b1 
+#define WR 0b10
+#define EX 0b100
 
 #define IS_VALID(x)                             \
   (x >> (PTESIZE - 1)) & 0b1
@@ -73,7 +77,7 @@ void store(int reg, int addr); // Not implemented yet
   x & (0b1 << (PTESIZE - 2))
 
 #define DECODE_PAGENB(x)                        \
-  x & 0b111111
+  x & 0b11111
 
 #define GET_INDEX(addr)                         \
   addr & (0xfffff << 12)
@@ -93,6 +97,10 @@ int memSize; // Size of RAM
 void* beginOfMem; // Address at boot
 
 address getPhysicalAddress(address addr);
+int askPage();
+int askFrame();
+void freePage(int number);
+void freeFrame(int number);
 
 void boot();
 void halt();
