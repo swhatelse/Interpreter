@@ -6,6 +6,8 @@
 #include<string.h>
 #include<getopt.h>
 #include"VM.h"
+#include"CPU.h"
+#include"memory.h"
 
 #define CHUNK 8 // Size of the buffer to read the program name
 #define LINESIZE 32
