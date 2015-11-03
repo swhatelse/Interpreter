@@ -38,7 +38,6 @@ int explode(const char* line, char*** words){
     // first count the number of characters of a word and then copy it
     if(line[i] == ' ' || line[i] == '\n'){
       *words = realloc(*words, sizeof(char*) * (nbWords + 1));
-      /* (*words)[nbWords] = realloc((*words)[nbWords], sizeof(char)*nbChars + 1); */
       (*words)[nbWords] = malloc(sizeof(char)*nbChars + 1);
 
       for(int j = beg, k = 0; j < i; j++, k++){

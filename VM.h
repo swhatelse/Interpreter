@@ -26,7 +26,6 @@
 
 #define INSTRSIZE 32 // Size of an instruction
 #define OPCODESIZE 4
-
 #define NBREGS 15
 
 int R[NBREGS]; // Generics registers. R0 is the accumalator.
@@ -56,14 +55,29 @@ void movv(int x, int y);
 void movr(int x, int y);
 void movrp(int x, int y);
 void movpr(int x, int y);
-void load(int reg, int addr);
-void store(int reg, int addr);
+void load(int reg, int addr); // Not implemented yet
+void store(int reg, int addr); // Not implemented yet
 
 /*************************** Memory *************************/
 #define PAGESIZE 4096
-#define MAXPROGSIZE PAGESIZE * 4
+#define PAGECODESIZE 6 // Size of the page number in the bits field
+#define PTSIZE 16 // Number of entry in the page table
+#define PTESIZE 8
+#define MAXPROGSIZE PAGESIZE * PTSIZE
 #define ADDRSIZE 16
-#define PAGECODESIZE 4
+// Protection code
+#define RD 0b1 
+#define WR 0b10
+#define EX 0b100
+
+#define IS_VALID(x)                             \
+  (x >> (PTESIZE - 1)) & 0b1
+
+#define DECODE_PROTECTION(x)                    \
+  x & (0b1 << (PTESIZE - 2))
+
+#define DECODE_PAGENB(x)                        \
+  x & 0b11111
 
 #define GET_INDEX(addr)                         \
   addr & (0xfffff << 12)
@@ -73,7 +87,9 @@ void store(int reg, int addr);
 
 typedef uint32_t address;
 
-char* pageTable;
+typedef char pte_t;
+
+pte_t* pageTable;
 char* frameTable; // Used to know if a physical page is already in use.
 int frameTableSize;
 void* memory; // RAM
@@ -81,6 +97,10 @@ int memSize; // Size of RAM
 void* beginOfMem; // Address at boot
 
 address getPhysicalAddress(address addr);
+int askPage();
+int askFrame();
+void freePage(int number);
+void freeFrame(int number);
 
 void boot();
 void halt();
